@@ -1,4 +1,6 @@
 var mysql = require ("mysql");
+var table = require ("console.table");
+var inquirer = require ("inquirer");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -19,7 +21,8 @@ function listProducts(){
     connection.query ("SELECT item_id, product_name, price FROM products", function(err,res){
         // if (err) throw err;
         //list all the products
-        console.log(res);
+         console.log(res);
+      console.table(res);
         connection.end();
     })
 }
