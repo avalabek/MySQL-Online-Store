@@ -73,19 +73,19 @@ function runPrompt(){
         }else{
             var productData = response[0];
             
-            console.log("*************************productData.stock_quantity below**********************************");
-            console.log(productData.stock_quantity);
+            // console.log("*************************productData.stock_quantity below**********************************");
+            // console.log(productData.stock_quantity);
             
             if(quantity <= productData.stock_quantity){
                 console.log(colors.yellow("Your item is in stock. Order placed."));
                 console.log(colors.red("Your total is $ " + productData.price * quantity));
             var updateStock =  parseInt((productData.stock_quantity - quantity)); 
             var updateQuery = "UPDATE products SET stock_quantity = " + updateStock + " WHERE item_id = " + item;
-                console.log("*************************updateStock**********************************");
-                console.log(updateStock);
+                // console.log("*************************updateStock**********************************");
+                // console.log(updateStock);
                 // stock_quantity = " + (productData.stock_quantity - quantity) + "WHERE item_id = " + item;
-                console.log(colors.magenta("++++++++++++++++++++++++++++"));
-                console.log(updateQuery);
+                // console.log(colors.magenta("++++++++++++++++++++++++++++"));
+                // console.log(updateQuery);
                 //can the below also be response?
             connection.query (updateQuery, function(err,response){
                 //  if (err) throw err;
