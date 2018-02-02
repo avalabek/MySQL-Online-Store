@@ -11,9 +11,11 @@ var connection = mysql.createConnection({
 });
 
 connection.connect(function(err){
-    // if (err) throw err;
+    if (err) throw err;
     console.log("Connected as id " + connection.threadID + "\n");
     listProducts();
+
+    
 });
 
 function listProducts(){
@@ -23,13 +25,16 @@ function listProducts(){
         //list all the products
          console.log(res);
       console.table(res);
-        connection.end();
+        // connection.end();
+        runPrompt();
     })
 }
-inquirer.prompt([
+function runPrompt(){
+    inquirer
+        .prompt([
     {
         type: "input",
-        name: "item_id",
+        name: "id",
         message: "What is the id of the item you want?"
     },
 
@@ -38,42 +43,27 @@ inquirer.prompt([
          name: "quantity",
          message: "What quantity would you like?"
      }
-     ]);
+     ])
+     
      //store the id response and the quantity res in a variable? use this
-    //  .then(function(answer){
-    //      if (answer.quantity <= 10) {
-    //      //how to grab info from table and take out only stock_quantity. I am using 10 just to get it to work 
-    //     console.log ("Your item is in stock.")
-    //     // update database
-    //     updateProduct();
-    //      }else{
-    //          console.log("Insufficient stock quantities!")
-    //      } 
-
-        //need to feed in the input of the item id and use that to select the stock quantity 
-        //then store that response in a variable
-        // connection.query SELECT stock_quantity from )
-//     })
-
-function updateProduct(){
-    console.log("Updating product quantities...");
-    var query = connection.query(
-        "UPDATE products SET ? WHERE ?",
-        [
-            //just to see if it works, set to 9
-            //need to set it so that it grabs
-            //the stock quantity from db and subtracts
-            //the amount the user ordered.
-           { quantity: 9
-           },
-        //    {item_id:
-            //set this to user input
-        // /}
-        ],
-        function(err,res){
-            //no idea where affectedRows is from
-            console.log(res.affectedRows + "products updated!\n");
-            console.log("Your total price is: ")//need to grab price from db and multiply it by quantity
-        }
-    )
-}
+      .then(function(res){
+          
+          //console.log(res); successfully logs response to inquirer
+          var item = res.id;
+          var quantity = res.quantity;
+          console.log(item);
+          console.log(quantity);
+          //below there is some problem other than the query; i have put in loads of simple query statements and none work
+          //for example
+        //   var nextQuery = "SELECT * FROM products";
+        //ideas: scope? wrap in function then call it?
+          var nextQuery = "SELECT stock_quantity FROM products";
+          connection.query(nextQuery, [{item_id: item}],function(err,response){
+             // if (err)throw err;
+        console.log(response);
+        console.log("________^^does it still say undefined?_________")
+        console.log(nextQuery);
+          })
+        })
+    }
+     
