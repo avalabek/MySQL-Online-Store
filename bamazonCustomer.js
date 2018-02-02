@@ -1,6 +1,7 @@
 var mysql = require ("mysql");
 var table = require ("console.table");
 var inquirer = require ("inquirer");
+var colors = require("colors/safe");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -19,11 +20,11 @@ connection.connect(function(err){
 });
 
 function listProducts(){
-    console.log("Listing all products...\n");
+    console.log(colors.zebra("Welcome in! Here's what you can buy...\n"));
     connection.query ("SELECT item_id, product_name, price FROM products", function(err,res){
         // if (err) throw err;
         //list all the products
-         console.log(res);
+        //  console.log(res);
       console.table(res);
         // connection.end();
         runPrompt();
@@ -41,8 +42,8 @@ function runPrompt(){
      {
          type:"input",
          name: "quantity",
-         message: "What quantity would you like?"
-     }
+         message: "What quantity would you like?"         
+        }
      ])
      
      //store the id response and the quantity res in a variable? use this
@@ -62,10 +63,42 @@ function runPrompt(){
         //       if (err) reject(err);
         //       resolve(res);
           connection.query(nextQuery, [{item_id: item}],function(err,response){
-             // if (err)throw err;
-        console.log(response);
-        console.log("________^^does it still say undefined?_________")
-        console.log(nextQuery);
+              if (err)throw err;
+        // console.log(response);
+        // console.log("________^^does it still say undefined?_________")
+        // console.log(nextQuery);
+        if (response.length === 0){
+            console.log(colors.rainbow("You have typed an invalid item number. Try again."));
+            listProducts();
+        }else{
+            var productData = response[0];
+            
+            console.log("*************************productData.stock_quantity below**********************************");
+            console.log(productData.stock_quantity);
+            
+            if(quantity <= productData.stock_quantity){
+                console.log(colors.yellow("Your item is in stock. Order placed."));
+                console.log(colors.red("Your total is $ " + productData.price * quantity));
+            var updateStock =  parseInt((productData.stock_quantity - quantity)); 
+            var updateQuery = "UPDATE products SET stock_quantity = " + updateStock + " WHERE item_id = " + item;
+                console.log("*************************updateStock**********************************");
+                console.log(updateStock);
+                // stock_quantity = " + (productData.stock_quantity - quantity) + "WHERE item_id = " + item;
+                console.log(colors.magenta("++++++++++++++++++++++++++++"));
+                console.log(updateQuery);
+                //can the below also be response?
+            connection.query (updateQuery, function(err,response){
+                //  if (err) throw err;
+                console.log("Your total is $ " + productData.price * quantity);
+                console.log(colors.cyan("Thank you for shopping with Bamazon. Sincerely, Eff Ezos."));
+                //is this a good place to end?
+                connection.end();
+            })
+            }else {
+                console.log (colors.red("Sorry, we do not have enough robots in our warehouse to fulfill your order. Please modify your order so we can pay a living wage.\n"));
+                listProducts();
+            }
+        }
           })
         })
     }
