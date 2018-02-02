@@ -57,7 +57,10 @@ function runPrompt(){
           //for example
         //   var nextQuery = "SELECT * FROM products";
         //ideas: scope? wrap in function then call it?
-          var nextQuery = "SELECT stock_quantity FROM products";
+          var nextQuery = "SELECT * FROM products WHERE ?";
+        //   connection.query('SELECT * FROM products WHERE ?', { item_id: answer.item }, function (err, res) {
+        //       if (err) reject(err);
+        //       resolve(res);
           connection.query(nextQuery, [{item_id: item}],function(err,response){
              // if (err)throw err;
         console.log(response);
@@ -66,4 +69,38 @@ function runPrompt(){
           })
         })
     }
-     
+     //the above returns undefined as result, means it isn't finding it?
+     //             var inStock = response[0];
+     //          if (quantity<= inStock.stock_quantity){
+     //              console.log("You're in luck! It's in stock.");
+     //          }else{
+     // console.log("That item is out of stock.");
+     // //then run function to start over or end, or give choice
+     //          }
+     //         });
+
+     //           console.log("Did I get stock quantities to print?");
+     //        });
+     // }//end of function runPrompt
+
+
+
+     // function updateProduct(){
+     //     console.log("Updating product quantities...");
+     //     var query = connection.query(
+     //         "UPDATE products SET ? WHERE ?",
+     //         [
+     //              //grabs the stock quantity from db and subtracts
+     //             //the amount the user ordered. think this is wrong
+     //            { quantity: (products.stock_quantity - inStock[i])
+     //            },
+     //            {item_id: item
+     //             //set this to user input
+     //         }
+     //         ],function(err,res){
+     //             //no idea res. what? item_id or product_name
+     //             console.log(res.affectedRows + "products updated!\n");
+     //             console.log("Your total price is: ")//need to grab price from db and multiply it by quantity
+     //         }
+     //     )
+     // }
